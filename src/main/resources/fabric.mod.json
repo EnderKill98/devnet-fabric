@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "devnet",
+  "version": "${version}",
+  "name": "DevNet",
+  "description": "Utilities for use on TheDevsPlayground (Paper based servers)",
+  "authors": [ "EnderKill98" ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/devnet/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "devs.the.devnet_fabric.DevNetMod"
+    ],
+    "modmenu": [
+      "devs.the.devnet_fabric.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "devnet.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
