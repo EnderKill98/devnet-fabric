@@ -36,6 +36,23 @@ public class ModMenuIntegration implements ModMenuApi {
                                 .controller(StringControllerBuilder::create)
                                 .build()
                         )
+                        .option(Option.<String>createBuilder()
+                                .name(Text.literal("Bot Feedback Format"))
+                                .binding(Config.HANDLER.defaults().botFeedbackFormat, () -> Config.HANDLER.instance().botFeedbackFormat, (newVal) -> Config.HANDLER.instance().botFeedbackFormat = newVal)
+                                .description(OptionDescription.of(Text.literal("""
+                                    Message format to be used for bot feedback.
+                                    You can use color codes with an ampersand as standing (&1, &l, ...).
+                                    
+                                    Variables:
+                                     - §l{prefix}§r: Mod Prefix
+                                     - §l{sender}§r: The name of the sender. Usually the name of the bot. But could be anything.
+                                     - §l{destination}§r: The destination of the originating message.
+                                     - §l{sender_or_destination}§r: Sender unless not present, then destination
+                                     - §l{message}§r: The message itself.
+                                    """)))
+                                .controller(StringControllerBuilder::create)
+                                .build()
+                        )
                         .group(OptionGroup.createBuilder()
                                 .name(Text.literal("Actions"))
                                 .option(ButtonOption.createBuilder()

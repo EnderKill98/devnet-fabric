@@ -211,16 +211,39 @@ public class DevNetClient {
             if(msg instanceof Messaging.DestinationsRequest || msg instanceof Messaging.CheckRequest || msg instanceof Messaging.PullRequest) {
                 LOGGER.warn("Did not expect to receive a request: {}", msg);
             }else if(msg instanceof Messaging.DestinationsResponse destinationsResponse) {
-                PullCommand.DESTINATIONS.clear();
+                DevNetMod.DESTINATIONS.clear();
                 for(Messaging.Destination destination : destinationsResponse.destinations())
-                    PullCommand.DESTINATIONS.add(destination.id());
-                LOGGER.info("Received {} destinations: {}", PullCommand.DESTINATIONS.size(), String.join(", ", PullCommand.DESTINATIONS));
+                    DevNetMod.DESTINATIONS.add(destination.id());
+                LOGGER.info("Received {} destinations: {}", DevNetMod.DESTINATIONS.size(), String.join(", ", DevNetMod.DESTINATIONS));
             }else if(msg instanceof Messaging.CheckResponse checkResponse) {
+                StringBuilder chatMessage = new StringBuilder(DevNetMod.PREFIX + "§a Check Response from §2" + checkResponse.destination() + "§a: ");
+                if (checkResponse.pearls().isEmpty()) {
+                    chatMessage.append("§oNo pearls reported.");
+                } else {
+                    for(int pearlIndex = 0; pearlIndex < checkResponse.pearls().size(); pearlIndex++) {
+                        chatMessage.append("\n §2" + pearlIndex + ":§a " + checkResponse.pearls().get(pearlIndex).toString());
+                    }
+                }
+                if(client.inGameHud != null && client.inGameHud.getChatHud() != null)
+                    client.inGameHud.getChatHud().addMessage(Text.literal(chatMessage.toString()));
+                else {
+                    LOGGER.info("Could not show bot checkl feedback: Sender: {}, ForMcId: {}, Pearls: {}", checkResponse.destination(), checkResponse.forMcId(), Messaging.PRETTY_GSON.toJson(checkResponse.pearls()));
+                }
+
                 LOGGER.info("Received check response (TODO, use it): {}", checkResponse);
             }else if(msg instanceof Messaging.BotFeedback botFeedback) {
-                String textMessage = "§2" + (botFeedback.sender().isBlank() ? botFeedback.destination() : botFeedback.sender() + " (" + botFeedback.destination() + ")") + ":§a " + botFeedback.message();
+                String chatMessage = Config.HANDLER.instance().botFeedbackFormat;
+                for(char code : "0123456789abcdefklmnor".toCharArray())
+                    chatMessage = chatMessage.replace("&" + code, "§" + code);
+                chatMessage = chatMessage
+                        .replace("{prefix}", DevNetMod.PREFIX)
+                        .replace("{sender}", botFeedback.sender())
+                        .replace("{destination}", botFeedback.destination())
+                        .replace("{sender_or_destination}", botFeedback.sender().isBlank() ? botFeedback.destination() : botFeedback.sender())
+                        .replace("{message}", botFeedback.message());
+
                 if(client.inGameHud != null && client.inGameHud.getChatHud() != null)
-                    client.inGameHud.getChatHud().addMessage(Text.literal(textMessage));
+                    client.inGameHud.getChatHud().addMessage(Text.literal(chatMessage));
                 else
                     LOGGER.info("Could not show bot feedback: Sender: {}, Destination: {}, Message: {}", botFeedback.sender(), botFeedback.destination(), botFeedback.message());
             }else {

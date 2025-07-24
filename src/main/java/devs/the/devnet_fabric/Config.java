@@ -27,4 +27,7 @@ public class Config {
     @SerialEntry(comment = "Your private token. Do not share this!")
     public String token = "";
 
+    @SerialEntry(comment = "Format to use for bot feedback")
+    public String botFeedbackFormat = "{prefix} &2{sender_or_destination}:&a {message}";
+
 }

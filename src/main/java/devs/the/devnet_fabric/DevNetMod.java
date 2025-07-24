@@ -5,14 +5,23 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DevNetMod implements ClientModInitializer {
 
+    public static final String PREFIX = "§8[§bDevNet§8]§f";
+
     public static Logger LOGGER = LoggerFactory.getLogger("devnet");
+
+    // Global list of subcommands for /pull and /checkpearls
+    public static final List<String> DESTINATIONS = new ArrayList<>();
 
     @Override
     public void onInitializeClient() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             dispatcher.register(PullCommand.create());
+            dispatcher.register(CheckPearlsCommand.create());
         });
 
         Config.HANDLER.load();
