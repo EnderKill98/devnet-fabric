@@ -40,7 +40,7 @@ public class DevNetClient {
     private static final double BACKOFF_MULTIPLIER = 2.0;
 
     public DevNetClient() {
-        this("wss://devnet.cosmos-ink.net"); // Default URI, change as needed
+        this("wss://devnet.cosmos-ink.net/ws"); // Default URI, change as needed
     }
 
     public DevNetClient(String serverUri) {
